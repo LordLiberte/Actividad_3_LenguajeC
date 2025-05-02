@@ -10,6 +10,7 @@ struct Client {
     char *num_account; // Número de cuenta del cliente
     char *money; // Cantidad de dinero del cliente
     char *type_investment; // Tipo de inversión del cliente
+    char *password;
 
   };
 
@@ -66,6 +67,15 @@ int main() {
   }
   buffer[strcspn(buffer, "\n")] = 0;
   asignarBufferAVariable(buffer, &client.num_account); // Asignamos el buffer a la variable del cliente (número de cuenta)
+
+  /*  ASIGNACIÓN PASSWORD DEL CLIENTE */
+  printf("Ingrese el contraseña del cliente: ");
+  if (fgets(buffer, sizeof(buffer), stdin) == NULL){
+    printf("Error al leer el password del cliente.\n");
+    return 1;
+  }
+  buffer[strcspn(buffer, "\n")] = 0;
+  asignarBufferAVariable(buffer, &client.password); // Asignamos el buffer a la variable del cliente (dinero)
 
   /*  ASIGNACIÓN DINERO DEL CLIENTE */
   printf("Ingrese el dinero del cliente: ");

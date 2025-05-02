@@ -5,6 +5,7 @@
         "registrador_clientes.C": "cpp",
         "registrador.C": "cpp",
         "1_registrador.C": "cpp",
-        "5_reporte_info.C": "cpp"
+        "5_reporte_info.C": "cpp",
+        "2_calc_intereses_rendimientos.C": "cpp"
     }
 }
