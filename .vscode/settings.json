@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "Ejercicio_1.C": "cpp",
+        "Ejercicio_2.C": "cpp",
+        "registrador_clientes.C": "cpp",
+        "registrador.C": "cpp",
+        "1_registrador.C": "cpp",
+        "5_reporte_info.C": "cpp"
+    }
+}
