@@ -2,6 +2,36 @@
 #include <string.h>
 #include <stdlib.h>
 
+/* PROTOTIPACIÓN DE FUNCIONES */
+int registrar(); // Declaración de la función registrar
+
+
+/* CICLO PRINCIPAL DE PROGRAMA  */
+int main(){
+  while (1){
+    printf("Bienvenido al sistema de registro de clientes\n"); // Mensaje de bienvenida
+    printf("1. Registrar cliente\n"); // Opción para registrar un cliente
+    printf("2. Salir\n"); // Opción para salir del programa
+    printf("Seleccione una opción: "); // Mensaje para seleccionar una opción
+
+    int opcion;
+    scanf("%d", &opcion); // Leemos la opción seleccionada por el usuario
+    getchar(); // Limpiamos el buffer de entrada
+
+    switch (opcion) {
+      case 1:
+        registrar(); // Llamamos a la función registrar si se selecciona la opción 1
+        break;
+      case 2:
+        printf("Saliendo del programa...\n"); // Mensaje de salida del programa
+        return 0; // Salimos del programa
+      default:
+        printf("Opción no válida. Intente nuevamente.\n"); // Mensaje de opción no válida
+        break;
+    }
+  }
+}
+
 // Definición de la estructura del cliente
 struct Client {
 
@@ -14,7 +44,7 @@ struct Client {
 
   };
 
-/*  FUNCIÓN GUARDAR DATOS JSON  */
+/*  GUARDAR DATOS JSON  */
 void guardarClienteComoJSON(struct Client client, const char *nombreArchivo) {
   FILE *archivo = fopen(nombreArchivo, "a"); // Abrimos el archivo en modo append (añadir al final)
   if (!archivo) {
@@ -42,7 +72,7 @@ void asignarBufferAVariable(char *buffer, char **variable) {
   strcpy(*variable, buffer); // Copiamos el buffer a la variable
 }
 
-int main() {
+int registrar() {
 
   /*  CREACIÓN DEL CLIENTE Y BUFFER DE DETERMINACIÓN DE MEMORIA */
   struct Client client;
@@ -117,5 +147,6 @@ int main() {
   free(client.type_investment); // Liberamos la memoria del tipo de inversión del cliente
 
   return 0;
+
 }
 
