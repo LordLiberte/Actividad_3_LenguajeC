@@ -1,8 +1,8 @@
 [{
-		"\n":	"cliente",
-		"name":	"Ingrid",
-		"num_account":	"ES8892001947567",
-		"money":	"120034",
-		"type_investment":	"Renta Fija",
-		"password":	"889093"
+		"name":	"Carlos",
+		"apellido":	"Gonzalez",
+		"num_account":	"1234",
+		"money":	"120.78",
+		"type_investment":	"Inmueble",
+		"password":	"5678"
 	}]
