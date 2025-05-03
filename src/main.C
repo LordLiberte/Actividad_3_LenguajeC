@@ -1,152 +1,144 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "cJSON.h"
 
-/* PROTOTIPACIÓN DE FUNCIONES */
-int registrar(); // Declaración de la función registrar
+// Estructura del cliente
+struct Client {
+    char *name;
+    char *apellido;
+    char *num_account;
+    char *money;
+    char *type_investment;
+    char *password;
+};
 
+// Prototipos
+int registrar();
+void guardarClienteComoJSON(struct Client client, const char *nombreArchivo);
+void asignarBufferAVariable(char *buffer, char **variable);
 
-/* CICLO PRINCIPAL DE PROGRAMA  */
-int main(){
-  while (1){
-    printf("Bienvenido al sistema de registro de clientes\n"); // Mensaje de bienvenida
-    printf("1. Registrar cliente\n"); // Opción para registrar un cliente
-    printf("2. Salir\n"); // Opción para salir del programa
-    printf("Seleccione una opción: "); // Mensaje para seleccionar una opción
+/* CICLO PRINCIPAL DE PROGRAMA */
+int main() {
+    while (1) {
+        printf("Bienvenido al sistema de registro de clientes\n");
+        printf("1. Registrar cliente\n");
+        printf("2. Salir\n");
+        printf("Seleccione una opcion: ");
 
-    int opcion;
-    scanf("%d", &opcion); // Leemos la opción seleccionada por el usuario
-    getchar(); // Limpiamos el buffer de entrada
+        int opcion;
+        scanf("%d", &opcion);
+        getchar();
 
-    switch (opcion) {
-      case 1:
-        registrar(); // Llamamos a la función registrar si se selecciona la opción 1
-        break;
-      case 2:
-        printf("Saliendo del programa...\n"); // Mensaje de salida del programa
-        return 0; // Salimos del programa
-      default:
-        printf("Opción no válida. Intente nuevamente.\n"); // Mensaje de opción no válida
-        break;
+        switch (opcion) {
+            case 1:
+                registrar();
+                break;
+            case 2:
+                printf("Saliendo del programa...\n");
+                return 0;
+            default:
+                printf("Opcion no valida. Intente nuevamente.\n");
+                break;
+        }
     }
-  }
 }
 
-// Definición de la estructura del cliente
-struct Client {
-
-    // Información del cliente
-    char *name; // Nombre del cliente
-    char *num_account; // Número de cuenta del cliente
-    char *money; // Cantidad de dinero del cliente
-    char *type_investment; // Tipo de inversión del cliente
-    char *password;
-
-  };
-
-/*  GUARDAR DATOS JSON  */
+/* GUARDAR DATOS JSON USANDO cJSON */
 void guardarClienteComoJSON(struct Client client, const char *nombreArchivo) {
-  FILE *archivo = fopen(nombreArchivo, "a"); // Abrimos el archivo en modo append (añadir al final)
-  if (!archivo) {
-      perror("Error al abrir el archivo");
-      return;
-  }
+    FILE *archivo = fopen(nombreArchivo, "r");
+    cJSON *clientes_json = NULL;
 
-  fprintf(archivo, "{\n");
-  fprintf(archivo, "  \"name\": \"%s\",\n", client.name);
-  fprintf(archivo, "  \"num_account\": \"%s\",\n", client.num_account);
-  fprintf(archivo, "  \"money\": \"%s\",\n", client.money);
-  fprintf(archivo, "  \"type_investment\": \"%s\"\n", client.type_investment);
-  fprintf(archivo, "}\n");
+    if (archivo) {
+        fseek(archivo, 0, SEEK_END);
+        long length = ftell(archivo);
+        fseek(archivo, 0, SEEK_SET);
 
-  fclose(archivo);
+        char *contenido = (char *)malloc(length + 1);
+        fread(contenido, 1, length, archivo);
+        contenido[length] = '\0';
+        fclose(archivo);
+
+        clientes_json = cJSON_Parse(contenido);
+        free(contenido);
+    }
+
+    if (!clientes_json) {
+        clientes_json = cJSON_CreateArray();
+    }
+
+    cJSON *cliente_json = cJSON_CreateObject();
+    cJSON_AddStringToObject(cliente_json, "", "\n");  // Titulo: valor
+    cJSON_AddStringToObject(cliente_json, "name", client.name);
+    cJSON_AddStringToObject(cliente_json, "apellido", client.apellido);
+    cJSON_AddStringToObject(cliente_json, "num_account", client.num_account);
+    cJSON_AddStringToObject(cliente_json, "money", client.money);
+    cJSON_AddStringToObject(cliente_json, "type_investment", client.type_investment);
+    cJSON_AddStringToObject(cliente_json, "password", client.password);
+
+    cJSON_AddItemToArray(clientes_json, cliente_json);
+
+    char *json_str = cJSON_Print(clientes_json);
+    archivo = fopen(nombreArchivo, "w");
+    fprintf(archivo, "%s", json_str);
+    fclose(archivo);
+
+    free(json_str);
+    cJSON_Delete(clientes_json);
 }
 
 /* FUNCIÓN ASIGNACIÓN BUFFER A VARIABLE */
 void asignarBufferAVariable(char *buffer, char **variable) {
-  *variable = (char *)malloc(strlen(buffer) + 1); // Reservamos memoria para la variable
-  if (*variable == NULL) {
-    printf("Error al asignar memoria para la variable.\n");
-    return;
-  }
-  strcpy(*variable, buffer); // Copiamos el buffer a la variable
+  if (fgets(buffer, sizeof(buffer), stdin) == NULL) return 1;
+    buffer[strcspn(buffer, "\n")] = 0;
+    *variable = (char *)malloc(strlen(buffer) + 1);
+    if (*variable == NULL) {
+        printf("Error al asignar memoria para la variable.\n");
+        return;
+    }
+    strcpy(*variable, buffer);
 }
 
+/* FUNCIÓN REGISTRAR CLIENTE */
 int registrar() {
+    struct Client client;
+    char buffer[1024];
 
-  /*  CREACIÓN DEL CLIENTE Y BUFFER DE DETERMINACIÓN DE MEMORIA */
-  struct Client client;
-  char buffer[1024]; // Definimos un buffer para almacenar variables, será temporal y se libera automaticamente
+    printf("Ingrese el nombre del cliente: ");
+    asignarBufferAVariable(buffer, &client.name);
 
-  /*  ASIGNACIÓN DE NOMBRE DEL CLIENTE  */
-  printf("Ingrese el nombre del cliente: ");
+    printf("Ingrese el apellido del cliente: ");
+    asignarBufferAVariable(buffer, &client.apellido);
 
-  if (fgets(buffer, sizeof(buffer), stdin) == NULL){ // Leemos el nombre del cliente y lo almacenamos en el buffer. Usamos fgets para evitar desbordamientos de buffer
-    printf("Error al leer el nombre del cliente.\n");
-    return 1;
-  }
+    printf("Ingrese el numero de cuenta del cliente: ");
+    asignarBufferAVariable(buffer, &client.num_account);
 
-  buffer[strcspn(buffer, "\n")] = 0; // Una vez leido el nombre, eliminamos el salto de línea al final (cosas de pulsar enter)
-  asignarBufferAVariable(buffer, &client.name); // Asignamos el buffer a la variable del cliente (nombre)
+    printf("Ingrese el contraseña del cliente: ");
+    asignarBufferAVariable(buffer, &client.password);
 
-  /*  ASIGNACIÓN NÚMERO DE CUENTA DEL CLIENTE */
-  printf("Ingrese el numero de cuenta del cliente: ");
-  if (fgets(buffer, sizeof(buffer), stdin) == NULL){
-    printf("Error al leer el numero de cuenta del cliente.\n");
-    return 1;
-  }
-  buffer[strcspn(buffer, "\n")] = 0;
-  asignarBufferAVariable(buffer, &client.num_account); // Asignamos el buffer a la variable del cliente (número de cuenta)
+    printf("Ingrese el dinero del cliente: ");
+    asignarBufferAVariable(buffer, &client.money);
 
-  /*  ASIGNACIÓN PASSWORD DEL CLIENTE */
-  printf("Ingrese el contraseña del cliente: ");
-  if (fgets(buffer, sizeof(buffer), stdin) == NULL){
-    printf("Error al leer el password del cliente.\n");
-    return 1;
-  }
-  buffer[strcspn(buffer, "\n")] = 0;
-  asignarBufferAVariable(buffer, &client.password); // Asignamos el buffer a la variable del cliente (dinero)
+    printf("Ingrese el tipo de inversion del cliente: ");
+    asignarBufferAVariable(buffer, &client.type_investment);
 
-  /*  ASIGNACIÓN DINERO DEL CLIENTE */
-  printf("Ingrese el dinero del cliente: ");
-  if (fgets(buffer, sizeof(buffer), stdin) == NULL){
-    printf("Error al leer el dinero del cliente.\n");
-    return 1;
-  }
-  buffer[strcspn(buffer, "\n")] = 0;
-  asignarBufferAVariable(buffer, &client.money); // Asignamos el buffer a la variable del cliente (dinero)
+    printf("\n***** DATOS DEL CLIENTE *****\n");
+    printf("Nombre: %s\n", client.name);
+    printf("Cuenta: %s\n", client.num_account);
+    printf("Dinero: %s\n", client.money);
+    printf("Inversión: %s\n", client.type_investment);
+    printf("****************************\n");
 
+    guardarClienteComoJSON(client, "../data/clientes.json");
+    printf("Datos guardados exitosamente en JSON.\n");
 
-  /*  ASIGNACIÓN TIPO INVERSIÓN DEL CLIENTE */
-  printf("Ingrese el tipo de inversion del cliente: ");
-  if (fgets(buffer, sizeof(buffer), stdin) == NULL){
-    printf("Error al leer el tipo de inversion del cliente.\n");
-    return 1;
-  }
-  buffer[strcspn(buffer, "\n")] = 0;
-  asignarBufferAVariable(buffer, &client.type_investment); // Asignamos el buffer a la variable del cliente (tipo de inversión)
+    free(client.name);
+    free(client.num_account);
+    free(client.money);
+    free(client.type_investment);
+    free(client.password);
 
-
-  /*  IMPRESIÓN EN PANTALLA DE RESULTADO  */
-  printf("\n***** DATOS DEL CLIENTE *****\n"); // Mostramos los datos del cliente
-  printf("Nombre del cliente: %s\n", client.name); // Mostramos el nombre del cliente
-  printf("Numero de cuenta del cliente: %s\n", client.num_account); // Mostramos el número de cuenta del cliente
-  printf("Dinero del cliente: %s\n", client.money); // Mostramos el dinero del cliente
-  printf("Tipo de inversion del cliente: %s\n", client.type_investment); // Mostramos el tipo de inversión del cliente
-  printf("****************************\n"); // Fin de la impresión de datos del cliente
-
-  /*  GUARDAMOS INFORMACIÓN EN JSON */
-  guardarClienteComoJSON(client, "../data/clientes.json"); // Guardamos los datos del cliente en un archivo JSON
-  printf("Los datos del cliente se han guardado en el archivo clientes.json\n"); // Mensaje de confirmación de guardado
-
-
-  /*  ZONA LIBERACIÓN MEMORIA USADA */
-  free(client.name); // Liberamos la memoria del nombre del cliente
-  free(client.num_account); // Liberamos la memoria del número de cuenta del cliente
-  free(client.money); // Liberamos la memoria del dinero del cliente
-  free(client.type_investment); // Liberamos la memoria del tipo de inversión del cliente
-
-  return 0;
-
+    return 0;
 }
+
 
