@@ -1,0 +1,15 @@
+[{
+		"name":	"Carlos",
+		"apellido":	"Gonzalez",
+		"num_account":	"ES2025",
+		"money":	"12391.54",
+		"type_investment":	"Renta Fija",
+		"password":	"1234"
+	}, {
+		"name":	"Juan",
+		"apellido":	"P‚rez",
+		"num_account":	"ES2024",
+		"money":	"300.00",
+		"type_investment":	"Inmueble",
+		"password":	"123455"
+	}]
