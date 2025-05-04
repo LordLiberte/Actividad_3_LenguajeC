@@ -319,6 +319,8 @@ int gestiontransacciones() {
         int opcion = atoi(buffer);
 
         switch (opcion) {
+
+            // Deposito de dinero
             case 1: {
                 printf("Cantidad a depositar: ");
                 fgets(buffer, sizeof(buffer), stdin);
@@ -331,6 +333,7 @@ int gestiontransacciones() {
                 printf("Saldo actual: %.2f\n", saldo_actual);
                 break;
             }
+            // Retiro de dinero
             case 2: {
                 printf("Cantidad a retirar: ");
                 fgets(buffer, sizeof(buffer), stdin);
@@ -350,6 +353,7 @@ int gestiontransacciones() {
                 }
                 break;
             }
+            // Transferencia de dinero
             case 3:
                 printf("Transferir dinero\n");
                 printf("Ingrese el numero de cuenta del destinatario: ");
