@@ -2,7 +2,21 @@
 		"name":	"Carlos",
 		"apellido":	"Gonzalez",
 		"num_account":	"1234",
-		"money":	"120.78",
+		"money":	"100.78",
 		"type_investment":	"Inmueble",
 		"password":	"5678"
+	}, {
+		"name":	"Carlos",
+		"apellido":	"Gonzalez",
+		"num_account":	"ES2233404040",
+		"money":	"120",
+		"type_investment":	"Renta Variable",
+		"password":	"223KDKLLAlkaks"
+	}, {
+		"name":	"Arturo",
+		"apellido":	"Aguarras",
+		"num_account":	"ES109873329",
+		"money":	"330.89",
+		"type_investment":	"Inmueble",
+		"password":	"12345"
 	}]

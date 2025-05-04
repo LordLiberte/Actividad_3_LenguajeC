@@ -7,6 +7,7 @@
         "1_registrador.C": "cpp",
         "5_reporte_info.C": "cpp",
         "2_calc_intereses_rendimientos.C": "cpp",
-        "main.C": "cpp"
+        "main.C": "cpp",
+        "string_view": "c"
     }
 }
